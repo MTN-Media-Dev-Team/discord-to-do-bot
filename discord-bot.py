@@ -25,13 +25,26 @@ def getConfigInfo(config):
     print("Please enter your discord bot information")
     config.set("DISCORD", "token", input("Token: "))
     print("Please enter your discord todo list channel id")
-    config.set("DISCORD", "todo_list_channel_id", input("Channel ID: "))
+    insert = [[input("Channel ID: "), "none"]]
+    config.set("DISCORD", "todo_list_channel_id", json.dumps(insert))
     configcreator.writeConfig(config)
     return configcreator.getConfig()
 
 config = configcreator.getConfig()
-if config.get("DISCORD", "token") == "none" or config.get("DISCORD", "todo_list_channel_id") == "":
+if config.get("DISCORD", "token") == "none" or config.get("DISCORD", "todo_list_channel_id") == "none":
     config = getConfigInfo(config)
+
+#ask if user wants to add channel
+print("Do you want to add a channel? (y/n)")
+addchannel = input()
+if addchannel == "y":
+    print("Please enter channel id to add")
+    channelid = input()
+    config = configcreator.getConfig()
+    channels = json.loads(config.get("DISCORD", "todo_list_channel_id"))
+    channels.append([channelid, "none"])
+    config.set("DISCORD", "todo_list_channel_id", json.dumps(channels))
+    configcreator.writeConfig(config)
 
 client = discord.Client()
 
@@ -45,14 +58,15 @@ def strCleanup(string):
     string = string.replace('§', ', ')
     return string
 
-async def addtolist(message, config, author):
-    if config.get("DISCORD", "todo_list_message_id") != "none":
+async def addtolist(channeldata, message, config, author):
+
+    if channeldata[1] != "none":
         msg = 0
         try:
-            channel = client.get_channel(int(config.get("DISCORD", "todo_list_channel_id")))
-            msg = await channel.fetch_message(int(config.get("DISCORD", "todo_list_message_id")))
+            channel = client.get_channel(int(channeldata[0]))
+            msg = await channel.fetch_message(int(channeldata[1]))
         except:
-            print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
+            print(f"Message {channeldata[1]} could not be fetched")
         if msg != 0:
             edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
             edited_embed.set_footer(text=longprogramname)
@@ -69,17 +83,21 @@ async def addtolist(message, config, author):
         edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
         edited_embed.set_footer(text=longprogramname)
         edited_embed.add_field(name=str(1), value=f":x: {message}", inline=False)
-        channel = client.get_channel(int(config.get("DISCORD", "todo_list_channel_id")))
+        channel = client.get_channel(int(channeldata[0]))
         msg = await channel.send(embed=edited_embed)
-        config.set("DISCORD", "todo_list_message_id", str(msg.id))
+        channels = json.loads(config.get("DISCORD", "todo_list_channel_id"))
+        for channelelement in channels:
+            if channelelement[0] == str(channeldata[0]):
+                channelelement[1] = str(msg.id)
+        config.set("DISCORD", "todo_list_channel_id", json.dumps(channels))
         configcreator.writeConfig(config)
 
-async def removefromlist(id, config):
-    if config.get("DISCORD", "todo_list_message_id") != "none":
+async def removefromlist(channeldata, id, config):
+    if channeldata[1] != "none":
         msg = None
         try:
-            channel = client.get_channel(int(config.get("DISCORD", "todo_list_channel_id")))
-            msg = await channel.fetch_message(int(config.get("DISCORD", "todo_list_message_id")))
+            channel = client.get_channel(int(channeldata[0]))
+            msg = await channel.fetch_message(int(channeldata[1]))
         except:
             print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
         if msg is not None:
@@ -98,12 +116,12 @@ async def removefromlist(id, config):
     else:
         print("No to-do list message id found")
 
-async def markasdone(id, config):
-    if config.get("DISCORD", "todo_list_message_id") != "none":
+async def markasdone(channeldata, id, config):
+    if channeldata[1] != "none":
         msg = None
         try:
-            channel = client.get_channel(int(config.get("DISCORD", "todo_list_channel_id")))
-            msg = await channel.fetch_message(int(config.get("DISCORD", "todo_list_message_id")))
+            channel = client.get_channel(int(channeldata[0]))
+            msg = await channel.fetch_message(int(channeldata[1]))
         except:
             print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
         if msg is not None:
@@ -123,12 +141,12 @@ async def markasdone(id, config):
     else:
         print("No to-do list message id found")
 
-async def markasundone(id, config):
-    if config.get("DISCORD", "todo_list_message_id") != "none":
+async def markasundone(channeldata, id, config):
+    if channeldata[1] != "none":
         msg = None
         try:
-            channel = client.get_channel(int(config.get("DISCORD", "todo_list_channel_id")))
-            msg = await channel.fetch_message(int(config.get("DISCORD", "todo_list_message_id")))
+            channel = client.get_channel(int(channeldata[0]))
+            msg = await channel.fetch_message(int(channeldata[1]))
         except:
             print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
         if msg is not None:
@@ -148,6 +166,31 @@ async def markasundone(id, config):
     else:
         print("No to-do list message id found")
 
+async def editlist(channeldata, id, message, config, author):
+    if channeldata[1] != "none":
+        msg = 0
+        try:
+            channel = client.get_channel(int(channeldata[0]))
+            msg = await channel.fetch_message(int(channeldata[1]))
+        except:
+            print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
+        if msg != 0:
+            edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
+            edited_embed.set_footer(text=longprogramname)
+            embed = msg.embeds[0]
+            embed_dict = embed.to_dict()
+            counter = 0
+            for field in embed_dict['fields']:
+                if field['name'] == str(id):
+                    edited_embed.add_field(name=field['name'], value=f":x: {message} - edited by {author}", inline=False)
+                    continue
+                edited_embed.add_field(name=field['name'], value=field['value'], inline=False)
+                counter += 1
+
+        await msg.edit(embed=edited_embed) 
+    else:
+        print("No to-do list message id found")
+
 
 @client.event
 async def on_ready():
@@ -159,7 +202,15 @@ async def on_message(message):
         return
     config = configcreator.getConfig()
     msg = message.content
-    if str(message.channel.id) == config.get("DISCORD", "todo_list_channel_id"):
+    ischannel = 0
+    channel = None
+    channels = json.loads(config.get("DISCORD", "todo_list_channel_id"))
+    for channelelement in channels:
+        if message.channel.id == int(channelelement[0]):
+            ischannel = 1
+            channel = channelelement
+            break
+    if ischannel == 1:
         if str(message.author) == 'Mats#2002' or str(message.author) == 'Asher (They|Them)#4931' or str(message.author) == 'Laurenzo#7927':
             if msg.startswith('[todo'):
                 x = msg.split()
@@ -170,17 +221,27 @@ async def on_message(message):
                     print("No command found")
                     return
                 if x[1] == "add":
-                    await addtolist(msg.partition(' ')[2].partition(' ')[2], config, str(message.author))
+                    config = configcreator.getConfig()
+                    await addtolist(channel, msg.partition(' ')[2].partition(' ')[2], config, str(message.author))
                     config = configcreator.getConfig()
                 elif x[1] == "remove":
                     config = configcreator.getConfig()
-                    await removefromlist(x[2], config)
+                    await removefromlist(channel, x[2], config)
+                elif x[1] == "edit":
+                    try:
+                        test3 = x[3]
+                    except:
+                        print("no text found")
+                        return
+                    config = configcreator.getConfig()
+                    await editlist(channel, x[2], msg.partition(' ')[2].partition(' ')[2].partition(' ')[2], config, str(message.author))
+                    config = configcreator.getConfig()
                 elif x[1] == "done":
                     config = configcreator.getConfig()
-                    await markasdone(x[2], config)
+                    await markasdone(channel, x[2], config)
                 elif x[1] == "undone":
                     config = configcreator.getConfig()
-                    await markasundone(x[2], config)
+                    await markasundone(message.channel.id, x[2], config)
                 await message.delete()
 
 token = config.get("DISCORD", "token")
