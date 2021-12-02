@@ -65,7 +65,7 @@ async def addtolist(channeldata, message, config, author):
         try:
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
-        except:
+        except Exception:
             print(f"Message {channeldata[1]} could not be fetched")
         if msg != 0:
             edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
@@ -73,11 +73,17 @@ async def addtolist(channeldata, message, config, author):
             embed = msg.embeds[0]
             embed_dict = embed.to_dict()
             counter = 0
-            for field in embed_dict['fields']:
-                edited_embed.add_field(name=field['name'], value=field['value'], inline=False)
-                counter += 1
-            edited_embed.add_field(name=str(counter + 1), value=f":x: {message} - added by {author}", inline=False)
-
+            try:
+                fields = embed_dict['fields']
+            except Exception:
+                counter = -1
+            if counter != -1:
+                for field in embed_dict['fields']:
+                    edited_embed.add_field(name=field['name'], value=field['value'], inline=False)
+                    counter += 1
+                edited_embed.add_field(name=str(counter + 1), value=f":x: {message} - added by {author}", inline=False)
+            else:
+                edited_embed.add_field(name=str(1), value=f":x: {message} - added by {author}", inline=False)
         await msg.edit(embed=edited_embed) 
     else:
         edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
@@ -98,7 +104,7 @@ async def removefromlist(channeldata, id, config):
         try:
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
-        except:
+        except Exception:
             print(f"Message {channeldata[1]} could not be fetched")
         if msg is not None:
             edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
@@ -122,7 +128,7 @@ async def markasdone(channeldata, id, config):
         try:
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
-        except:
+        except Exception:
             print(f"Message {channeldata[1]} could not be fetched")
         if msg is not None:
             edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
@@ -147,7 +153,7 @@ async def markasundone(channeldata, id, config):
         try:
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
-        except:
+        except Exception:
             print(f"Message {channeldata[1]} could not be fetched")
         if msg is not None:
             edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
@@ -172,7 +178,7 @@ async def editlist(channeldata, id, message, config, author):
         try:
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
-        except:
+        except Exception:
             print(f"Message {channeldata[1]} could not be fetched")
         if msg != 0:
             edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
@@ -217,7 +223,7 @@ async def on_message(message):
                 try:
                     test = x[1] 
                     test2 = x[2] 
-                except:
+                except Exception:
                     print("No command found")
                     return
                 if x[1] == "add":
@@ -230,7 +236,7 @@ async def on_message(message):
                 elif x[1] == "edit":
                     try:
                         test3 = x[3]
-                    except:
+                    except Exception:
                         print("no text found")
                         return
                     config = configcreator.getConfig()
