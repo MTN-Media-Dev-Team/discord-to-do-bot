@@ -68,7 +68,7 @@ async def addtolist(channeldata, message, config, author):
         except:
             print(f"Message {channeldata[1]} could not be fetched")
         if msg != 0:
-            edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
+            edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
             edited_embed.set_footer(text=longprogramname)
             embed = msg.embeds[0]
             embed_dict = embed.to_dict()
@@ -80,7 +80,7 @@ async def addtolist(channeldata, message, config, author):
 
         await msg.edit(embed=edited_embed) 
     else:
-        edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
+        edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
         edited_embed.set_footer(text=longprogramname)
         edited_embed.add_field(name=str(1), value=f":x: {message}", inline=False)
         channel = client.get_channel(int(channeldata[0]))
@@ -99,9 +99,9 @@ async def removefromlist(channeldata, id, config):
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
         except:
-            print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
+            print(f"Message {channeldata[1]} could not be fetched")
         if msg is not None:
-            edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
+            edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
             edited_embed.set_footer(text=longprogramname)
             embed = msg.embeds[0]
             embed_dict = embed.to_dict()
@@ -123,9 +123,9 @@ async def markasdone(channeldata, id, config):
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
         except:
-            print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
+            print(f"Message {channeldata[1]} could not be fetched")
         if msg is not None:
-            edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
+            edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
             edited_embed.set_footer(text=longprogramname)
             embed = msg.embeds[0]
             embed_dict = embed.to_dict()
@@ -148,9 +148,9 @@ async def markasundone(channeldata, id, config):
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
         except:
-            print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
+            print(f"Message {channeldata[1]} could not be fetched")
         if msg is not None:
-            edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
+            edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
             edited_embed.set_footer(text=longprogramname)
             embed = msg.embeds[0]
             embed_dict = embed.to_dict()
@@ -173,9 +173,9 @@ async def editlist(channeldata, id, message, config, author):
             channel = client.get_channel(int(channeldata[0]))
             msg = await channel.fetch_message(int(channeldata[1]))
         except:
-            print(f"Message {config.get('DISCORD', 'todo_list_message_id')} could not be fetched")
+            print(f"Message {channeldata[1]} could not be fetched")
         if msg != 0:
-            edited_embed = discord.Embed(title="TO-DO-LIST", description="To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'", color=0xff0000)
+            edited_embed = discord.Embed(title="TO-DO-LIST", description=config.get("DISCORD", "description"), color=0xff0000)
             edited_embed.set_footer(text=longprogramname)
             embed = msg.embeds[0]
             embed_dict = embed.to_dict()
@@ -241,7 +241,7 @@ async def on_message(message):
                     await markasdone(channel, x[2], config)
                 elif x[1] == "undone":
                     config = configcreator.getConfig()
-                    await markasundone(message.channel.id, x[2], config)
+                    await markasundone(channel, x[2], config)
                 await message.delete()
 
 token = config.get("DISCORD", "token")

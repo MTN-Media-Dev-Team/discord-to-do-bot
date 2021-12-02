@@ -12,7 +12,7 @@ def createSampleConfig(version, programname, channel, date):
     config["DISCORD"] = {
         "token": "none",
         "todo_list_channel_id": "none",
-        "todo_list_message_id": "none",
+        "description": "To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'\nTo edit a message, write [todo edit 'id' 'new message'",
     }
     with open('configsample.cfg', 'w+') as conf:
         config.write(conf)
