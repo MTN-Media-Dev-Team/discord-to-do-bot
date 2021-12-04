@@ -13,9 +13,9 @@ import configcreator
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
-version = "V0.1.0-bot"
-devchannel = "dev"
-versiondate = "02.12.2021 22:00 UTC"
+version = "V0.1.1"
+devchannel = "beta"
+versiondate = "04.12.2021 01:00 UTC"
 longversion = f"{version} {devchannel} {versiondate} - by MTN Media Dev Team"
 programname = "To-Do Discord Bot"
 longprogramname = f"{programname} - by MTN Media Dev Team"
