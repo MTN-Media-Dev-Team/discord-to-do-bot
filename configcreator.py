@@ -1,13 +1,14 @@
 from configparser import ConfigParser
 from pathlib import Path
 
-def createSampleConfig(version, programname, channel, date):
+def createSampleConfig(version, programname, channel, date, longprogramname):
     config = ConfigParser()
     config["GENERAL"] = {
         "version": version,
         "versionchannel": channel,
         "versiondate": date,
         "programname": programname,
+        "longprogramname": longprogramname,
     }
     config["DISCORD"] = {
         "token": "none",
