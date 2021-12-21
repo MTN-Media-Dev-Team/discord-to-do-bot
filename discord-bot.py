@@ -82,6 +82,10 @@ async def on_message(message):
                     config = configcreator.getConfig()
                     await todofunctions.markasundone(client, channel, x[2], config)
                 await message.delete()
+        else:
+            if msg.startswith('[todo'):
+                sending = await message.channel.send("You do not have permission to use this command")
+                await message.delete()
     if msg.startswith('[todoadmin'):
         if (str(message.author) in json.loads(config.get("DISCORD", "todo_list_admins"))):
             x = msg.split()
