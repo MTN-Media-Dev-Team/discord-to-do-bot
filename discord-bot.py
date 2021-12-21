@@ -85,6 +85,7 @@ async def on_message(message):
         else:
             if msg.startswith('[todo'):
                 sending = await message.channel.send("You do not have permission to use this command")
+                logging.warning(f"User {str(message.author)} tried to use a command but does not have permission")
                 await message.delete()
     if msg.startswith('[todoadmin'):
         if (str(message.author) in json.loads(config.get("DISCORD", "todo_list_admins"))):
