@@ -1,5 +1,5 @@
-import discord
-from discord.ext import tasks
+import nextcord
+from nextcord.ext import tasks
 import os
 import sys
 import time
@@ -16,9 +16,9 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     input("Press Enter to exit...")
     sys.exit()
 
-version = "V0.1.2"
+version = "V0.1.3"
 devchannel = "dev"
-versiondate = "04.12.2021 02:00 UTC"
+versiondate = "04.03.2022 18:00 UTC"
 longversion = f"{version} {devchannel} {versiondate} - by MTN Media Dev Team"
 programname = "To-Do Discord Bot"
 longprogramname = f"{programname} - by MTN Media Dev Team"
@@ -28,10 +28,10 @@ print(longversion)
 configcreator.createSampleConfig(version, programname, devchannel, versiondate, longprogramname)
 
 config = configcreator.getConfig()
-if config.get("DISCORD", "token") == "none" or config.get("DISCORD", "todo_list_channel_id") == "none" or config.get("DISCORD", "todo_list_allowed_users") == "none" or config.get("DISCORD", "todo_list_admins") == "none":
+if config.get("DISCORD", "token") == "none" or config.get("DISCORD", "todo_list_channel_id") == "none" or config.get("DISCORD", "todo_list_admins") == "none":
     config = todofunctions.getConfigInfo(config)
 
-client = discord.Client()
+client = nextcord.Client()
 
 @client.event
 async def on_ready():
@@ -46,13 +46,15 @@ async def on_message(message):
     ischannel = 0
     channel = None
     channels = json.loads(config.get("DISCORD", "todo_list_channel_id"))
+    allowedusers = None
     for channelelement in channels:
         if message.channel.id == int(channelelement[0]):
             ischannel = 1
             channel = channelelement
+            allowedusers = channelelement[2]
             break
     if ischannel == 1 and not msg.startswith('[todoadmin'):
-        if str(message.author) in json.loads(config.get("DISCORD", "todo_list_allowed_users")):
+        if str(message.author) in allowedusers:
             if msg.startswith('[todo'):
                 x = msg.split()
                 try:
@@ -102,6 +104,12 @@ async def on_message(message):
             elif x[1] == "removechannel" and ischannel == 1:
                 await todofunctions.removeChannelFromSystem(client, message.channel.id, message)
                 logging.warning(f"Channel {message.channel.id} removed from system by {str(message.author)} on server {message.guild.id}")
+            elif x[1] == "adduser" and ischannel == 1:
+                await todofunctions.addAllowedUserToChannel(message.channel.id, message)
+                logging.warning(f"User added to channel {message.channel.id} by {str(message.author)} on server {message.guild.id}")
+            elif x[1] == "removeuser" and ischannel == 1:
+                await todofunctions.removeAllowedUserFromChannel(message.channel.id, message)
+                logging.warning(f"User removed from channel {message.channel.id} by {str(message.author)} on server {message.guild.id}")
         await message.delete()
 
 token = config.get("DISCORD", "token")
