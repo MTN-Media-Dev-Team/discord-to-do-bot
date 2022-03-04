@@ -11,13 +11,14 @@ import configcreator
 import todofunctions
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
+
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     logging.CRITICAL(f"Error: This program requires running python 3.6 or higher! You are running {str(sys.version_info[0])}.{str(sys.version_info[1])}")
     input("Press Enter to exit...")
     sys.exit()
 
 version = "V0.1.3"
-devchannel = "dev"
+devchannel = "beta"
 versiondate = "04.03.2022 18:00 UTC"
 longversion = f"{version} {devchannel} {versiondate} - by MTN Media Dev Team"
 programname = "To-Do Discord Bot"
