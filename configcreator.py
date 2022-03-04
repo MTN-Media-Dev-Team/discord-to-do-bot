@@ -1,18 +1,18 @@
 from configparser import ConfigParser
 from pathlib import Path
 
-def createSampleConfig(version, programname, channel, date):
+def createSampleConfig(version, programname, channel, date, longprogramname):
     config = ConfigParser()
     config["GENERAL"] = {
         "version": version,
         "versionchannel": channel,
         "versiondate": date,
         "programname": programname,
+        "longprogramname": longprogramname,
     }
     config["DISCORD"] = {
         "token": "none",
         "todo_list_channel_id": "none",
-        "todo_list_allowed_users": "none",
         "todo_list_admins": "none",
         "description": "To add to to-do list write [todo add 'your message'\nTo remove from to-do list write [todo remove 'id as number'\nTo mark as done/undone, write [todo done 'id'\nTo edit a message, write [todo edit 'id' 'new message'",
     }
