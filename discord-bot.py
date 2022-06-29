@@ -43,9 +43,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     config = configcreator.getConfig()
-    print(message)
-    msg = await client.fetch_channel(message.channel.id).fetch_message(message.id)
-    print(msg)
+    msg = message.content
     ischannel = 0
     channel = None
     channels = json.loads(config.get("DISCORD", "todo_list_channel_id"))
