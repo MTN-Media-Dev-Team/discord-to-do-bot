@@ -44,7 +44,7 @@ async def on_message(message):
         return
     config = configcreator.getConfig()
     print(message)
-    msg = client.fetch_channel(message.channel.id).fetch_message(message.id)
+    msg = await client.fetch_channel(message.channel.id).fetch_message(message.id)
     print(msg)
     ischannel = 0
     channel = None
