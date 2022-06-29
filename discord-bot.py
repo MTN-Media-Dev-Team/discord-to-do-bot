@@ -43,7 +43,9 @@ async def on_message(message):
     if message.author == client.user:
         return
     config = configcreator.getConfig()
-    msg = message.content
+    msg = ""
+    async for message2 in message.channel.history(limit=1):
+        msg = message2.content
     print(msg)
     ischannel = 0
     channel = None
