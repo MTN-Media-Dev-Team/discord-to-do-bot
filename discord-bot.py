@@ -43,7 +43,8 @@ async def on_message(message):
     if message.author == client.user:
         return
     config = configcreator.getConfig()
-    msg = message.content.lower()
+    print(message.content)
+    msg = message.content
     ischannel = 0
     channel = None
     channels = json.loads(config.get("DISCORD", "todo_list_channel_id"))
@@ -54,7 +55,6 @@ async def on_message(message):
             channel = channelelement
             allowedusers = channelelement[2]
             break
-    print(msg)
     if ischannel == 1 and not msg.startswith('[todoadmin'):
         if str(message.author) in allowedusers:
             if msg.startswith('[todo'):
