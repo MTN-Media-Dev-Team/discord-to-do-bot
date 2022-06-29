@@ -36,7 +36,7 @@ client = nextcord.Client()
 
 @client.event
 async def on_ready():
-    logging.info(f"We have logged in as {client}")
+    logging.info(f"We have logged in as {client.user}")
 
 @client.event
 async def on_message(message):
