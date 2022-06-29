@@ -46,7 +46,7 @@ async def on_message(message):
     msg = ""
     async for message2 in message.channel.history(limit=1):
         msg = message2.content
-    print(msg)
+    #print(msg)
     ischannel = 0
     channel = None
     channels = json.loads(config.get("DISCORD", "todo_list_channel_id"))
