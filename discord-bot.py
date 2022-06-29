@@ -44,7 +44,8 @@ async def on_message(message):
         return
     config = configcreator.getConfig()
     print(message)
-    msg = message.content
+    msg = client.fetch_channel(message.channel.id).fetch_message(message.id)
+    print(msg)
     ischannel = 0
     channel = None
     channels = json.loads(config.get("DISCORD", "todo_list_channel_id"))
